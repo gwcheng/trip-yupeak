@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026玉山團</title>
+    <style>
+        :root {
+            --primary-color: #1e3f20;
+            --secondary-color: #3b6e4c;
+            --accent-color: #e67e22;
+            --bg-color: #f4f7f4;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --border-color: #dcdde1;
+            --required-color: #c0392b;
+            --optional-color: #2980b9;
+            --eco-color: #27ae60;
+            --time-color: #8e44ad;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft JhengHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.85;
+        }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: table;
+            width: 100%;
+            background-color: #f8faf8;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            display: table-cell;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #7f8c8d;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            width: 33.33%;
+        }
+
+        .tab-btn:hover {
+            color: var(--secondary-color);
+            background-color: #f0f4f0;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            background-color: var(--card-bg);
+        }
+
+        /* Tab Content */
+        .tab-panel {
+            display: none;
+            padding: 35px 30px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Itinerary Styles */
+        .itinerary-section {
+            margin-bottom: 30px;
+        }
+
+        .itinerary-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .day-title {
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: inline-block;
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 10px;
+            font-weight: bold;
+        }
+
+        .route-flow {
+            background: #f9fbf9;
+            border: 1px solid #eef2ee;
+            border-radius: 12px;
+            padding: 20px;
+            line-height: 2.2;
+        }
+
+        .route-node {
+            display: inline-block;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin: 5px 0;
+            font-weight: 500;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative;
+        }
+        
+        .time-badge {
+            display: inline-block;
+            background-color: #f5eef8;
+            color: var(--time-color);
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            border: 1px solid #d7bde2;
+        }
+        
+        .highlight-action {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .route-arrow {
+            display: inline-block;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin: 0 8px;
+        }
+
+        /* Checklist Styles */
+        .checklist-group {
+            margin-bottom: 35px;
+        }
+
+        .checklist-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .group-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: bold;
+        }
+
+        .group-title.required {
+            color: var(--required-color);
+            border-bottom-color: #fadbd8;
+        }
+
+        .group-title.optional {
+            color: var(--optional-color);
+            border-bottom-color: #d4e6f1;
+        }
+
+        .check-item {
+            display: block;
+            position: relative;
+            padding: 12px 10px 12px 40px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+            border-bottom: 1px dashed #edf0ed;
+        }
+
+        .check-item:hover {
+            background-color: #f4f7f4;
+        }
+
+        .check-item input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            height: 20px;
+            width: 20px;
+            background-color: #eee;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .check-item:hover input ~ .checkmark {
+            background-color: #ccc;
+        }
+
+        .check-item input:checked ~ .checkmark {
+            background-color: var(--secondary-color);
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .check-item input:checked ~ .checkmark:after {
+            display: block;
+        }
+
+        .check-item .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .check-item input:checked ~ span {
+            color: #95a5a6;
+            text-decoration: line-through;
+        }
+
+        /* Notes Styles */
+        .notes-list {
+            list-style: none;
+        }
+
+        .note-item {
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+            text-align: justify;
+        }
+
+        .note-num {
+            position: absolute;
+            left: 0;
+            top: 3px;
+            background-color: var(--secondary-color);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .highlight-text {
+            color: var(--required-color);
+            font-weight: bold;
+            background-color: #fdf2e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .eco-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            background-color: #e8f8f5;
+            color: var(--eco-color);
+            border: 1px solid #a3e4d7;
+            padding: 1px 5px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+
+        .wc-loc {
+            background: #f8faf8;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #eef2ee;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        /* Responsive UI */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            header {
+                padding: 30px 20px;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+            .tab-panel {
+                padding: 25px 20px;
+            }
+            .route-flow {
+                padding: 15px;
+                line-height: 1.8;
+            }
+            .route-arrow {
+                display: block;
+                text-align: center;
+                margin: 5px 0;
+                transform: rotate(90deg);
+            }
+            .route-node {
+                display: block;
+                text-align: center;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>2026 玉山團</h1>
+            <p>行前必看指南 • 挑戰台灣最高峰</p>
+        </header>
+
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="openTab(event, 'itinerary')">行程</button>
+            <button class="tab-btn" onclick="openTab(event, 'checklist')">裝備檢查表</button>
+            <button class="tab-btn" onclick="openTab(event, 'notes')">備註</button>
+        </div>
+
+        <!-- 行程 Tab -->
+        <div id="itinerary" class="tab-panel active">
+            <div class="itinerary-section">
+                <div class="day-title">第 1 天行程 (2026-08-01)</div>
+                <div class="route-flow">
+                    <span class="route-node"><span class="time-badge">05:00</span>新竹富宇文匯出發</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">水里國中<span class="highlight-action">吃早餐</span></span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">塔塔加檢查站<span class="highlight-action">搭接駁車</span></span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">塔塔加登山口</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">1.8k 孟祿亭</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">5k 西峰下觀景台<span class="highlight-action">吃午餐</span></span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">8.5K 排雲山莊</span>
+                </div>
+            </div>
+            
+            <div class="itinerary-section">
+                <div class="day-title">第 2 天行程 (2026-08-02)</div>
+                <div class="route-flow">
+                    <span class="route-node"><span class="time-badge">05:00</span>排雲山莊</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node"><span class="time-badge">07:30</span>玉山主峰</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node"><span class="time-badge">10:30</span>排雲山莊</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">5k 西峰下觀景台</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">1.8k 孟祿亭</span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node"><span class="time-badge">15:00</span>塔塔加登山口<span class="highlight-action">搭接駁車</span></span>
+                    <span class="route-arrow">→</span>
+                    <span class="route-node">塔塔加檢查站</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 裝備檢查表 Tab -->
+        <div id="checklist" class="tab-panel">
+            <div class="checklist-group">
+                <div class="group-title required">【 必備裝備 】</div>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>背包（約 30L 大小）</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>雨衣</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>防寒外套</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>防寒手套</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>毛帽</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>頭燈</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>衛生紙</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span class="highlight-text">個人垃圾袋</span>
+                </label>
+            </div>
+
+            <div class="checklist-group">
+                <div class="group-title optional">【 個人選配 】</div>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>登山杖</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>備用長袖排汗衫</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>水壺</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>防曬乳</span>
+                </label>
+                <label class="check-item">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    <span>護膝</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- 備註 Tab -->
+        <div id="notes" class="tab-panel">
+            <ul class="notes-list">
+                <li class="note-item">
+                    <span class="note-num">1</span>
+                    <span><span class="highlight-text">個人垃圾袋必備。</span></span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">2</span>
+                    <span>幾乎所有裝備都有替代方案，不要為此特地買全新的。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">3</span>
+                    <span>背包建議 30L 以下，不要超過 50L。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">4</span>
+                    <span>雨衣不用特地去買什麼高檔貨 Gore-Tex，兩天而已，搭配備用排汗衫更換就好。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">5</span>
+                    <span>防寒外套以羽絨或化纖外套為佳，隔天山頂氣溫約十度以下。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">6</span>
+                    <span>鞋子以登山鞋為佳，沒有的話不用特地買新的，平時穿慣的運動鞋亦可。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">7</span>
+                    <span>登山杖可自備，若無亦可。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">8</span>
+                    <span>第一天行程 8.5 公里，帶水壺自備 1-2 升行動水，山屋可補水。</span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">9</span>
+                    <span><span class="highlight-text">再次強調個人垃圾袋必備。</span></span>
+                </li>
+                <li class="note-item">
+                    <span class="note-num">10</span>
+                    <span>
+                        <strong>廁所位置：</strong><br>
+                        <span class="wc-loc">塔塔加檢查站</span> → 
+                        <span class="wc-loc">1.8k 孟祿亭 <span class="eco-tag">生態廁所</span></span> → 
+                        <span class="wc-loc">5k 西峰下觀景台 <span class="eco-tag">生態廁所</span></span> → 
+                        <span class="wc-loc">8.5k 排雲山莊</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab panels
+            var i, tabContent, tabButtons;
+            tabContent = document.getElementsByClassName("tab-panel");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].classList.remove("active");
+            }
+
+            // Remove active class from all buttons
+            tabButtons = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            // Show current tab panel and add active class to button
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+
+</body>
+</html>
